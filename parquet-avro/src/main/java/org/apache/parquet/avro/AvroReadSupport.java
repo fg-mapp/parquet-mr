@@ -110,12 +110,13 @@ public class AvroReadSupport<T> extends ReadSupport<T> {
     MessageType parquetSchema = readContext.getRequestedSchema();
     Schema avroSchema;
 
+    boolean validateDefaults = configuration.getBoolean("parquet.avro.validate.defaults", true);
     if (metadata.get(AVRO_READ_SCHEMA_METADATA_KEY) != null) {
       // use the Avro read schema provided by the user
-      avroSchema = new Schema.Parser().parse(metadata.get(AVRO_READ_SCHEMA_METADATA_KEY));
+      avroSchema = new Schema.Parser().setValidateDefaults(validateDefaults).parse(metadata.get(AVRO_READ_SCHEMA_METADATA_KEY));
     } else if (keyValueMetaData.get(AVRO_SCHEMA_METADATA_KEY) != null) {
       // use the Avro schema from the file metadata if present
-      avroSchema = new Schema.Parser().parse(keyValueMetaData.get(AVRO_SCHEMA_METADATA_KEY));
+      avroSchema = new Schema.Parser().setValidateDefaults(validateDefaults).parse(keyValueMetaData.get(AVRO_SCHEMA_METADATA_KEY));
     } else if (keyValueMetaData.get(OLD_AVRO_SCHEMA_METADATA_KEY) != null) {
       // use the Avro schema from the file metadata if present
       avroSchema = new Schema.Parser().parse(keyValueMetaData.get(OLD_AVRO_SCHEMA_METADATA_KEY));
